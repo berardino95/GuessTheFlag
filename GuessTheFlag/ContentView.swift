@@ -61,8 +61,9 @@ struct ContentView: View {
                                     FlagImage(imageName: countries[number])
                                         .rotation3DEffect(.degrees(selectedFlag == number ? 360 : 0), axis: (x: 0, y: 1, z: 0))
                                         .opacity(selectedFlag == -1 || selectedFlag == number ? 1 : 0.3)
-                                        .scaleEffect(selectedFlag == -1 || selectedFlag == number ? 1 : 0.8)
                                         .animation(selectedFlag != -1 ? .easeOut : nil, value: selectedFlag)
+                                        .scaleEffect(selectedFlag == -1 || selectedFlag == number ? 1 : 0.8)
+                                        .animation(.easeOut, value: selectedFlag)
                                 }
                             }
                         }
@@ -106,18 +107,21 @@ struct ContentView: View {
         //passing the number of the selected flag
         selectedFlag = number
         
-        if number == correctAnswer{
-            scoreTitle = "Correct"
-            score += 1
-            answerMessage = "Your score is \(score)"
-        } else {
-            scoreTitle = "Wrong"
-            answerMessage = "This is the flag of \(countries[number]) \n Your score is \(score)"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // your function
+            if number == correctAnswer{
+                scoreTitle = "Correct"
+                score += 1
+                answerMessage = "Your score is \(score)"
+            } else {
+                scoreTitle = "Wrong"
+                answerMessage = "This is the flag of \(countries[number]) \n Your score is \(score)"
+            }
+            if questionNumber == maxQuestionNumber {
+                showingFinalAlert = true
+            } else {
+                showingScore = true }
         }
-        if questionNumber == maxQuestionNumber {
-            showingFinalAlert = true
-        } else {
-            showingScore = true }
     }
     
     func askQuestion(){
@@ -132,6 +136,7 @@ struct ContentView: View {
         countries.shuffle()
         score = 0
         questionNumber = 0
+        selectedFlag = -1
     }
     
 }
